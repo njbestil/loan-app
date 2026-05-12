@@ -52,8 +52,6 @@ The main objective of this application is to assist organizations in:
 
 ## Technologies Used
 
-> Customize this section based on your actual tech stack.
-
 ### Frontend
 - ReactJS
 - Vite
@@ -61,11 +59,10 @@ The main objective of this application is to assist organizations in:
 - Recharts
 
 ### Backend
-- Java
-- Spring Boot / Node.js / Express
-
+- Laravel
+  
 ### Database
-- MySQL / PostgreSQL / SQLite
+- MySQL
 
 ### Other Technologies
 - REST API
@@ -87,7 +84,6 @@ Handles applicant information such as:
 Responsible for:
 - Loan application submission
 - Loan approval/rejection
-- Payment scheduling
 - Loan tracking
 
 ### 3. Risk Evaluation Engine
@@ -99,7 +95,6 @@ Evaluates:
 
 ### 4. Predictive Analytics
 Uses statistical and probability methods to:
-- Predict loan repayment behavior
 - Forecast possible trends
 - Detect high-risk applicants
 - Analyze lending performance
@@ -146,11 +141,7 @@ npm run dev
 
 ## Screenshots
 
-Add screenshots for:
-- Dashboard
-- Loan application form
-- Risk evaluation module
-- Statistical prediction charts
+N/A
 
 ---
 

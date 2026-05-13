@@ -252,29 +252,28 @@ export default function ApplicationReport() {
    const getPieColor = (riskScore, riskPassingScore) => {
       riskPassingScore = JSON.parse(riskPassingScore);
 
-      // Get min and max values
-      const minValue = Math.min(...riskPassingScore.map(risk => Number(risk.value)));
-      const maxValue = Math.max(...riskPassingScore.map(risk => Number(risk.value)));
+      let rating = Number(riskScore?.value);
+      const totalParts = Number(riskPassingScore.length);
 
-      // Determine color
-      if (riskScore.value > maxValue || riskScore.value < minValue) {
+      if (isNaN(totalParts) || totalParts <= 0) return "#d9d9d9";
+
+      if (isNaN(rating) || rating === null || rating === undefined) {
          return "#e9e9e9";
       }
-      else if (riskScore.value == minValue) {
-         return "#95c3af"; // Lowest risk (best)
-      } else if (riskScore.value == maxValue) {
-         return "#e5c0c0"; // Highest risk (worst)
-      } else if (riskScore.value > minValue && riskScore.value < maxValue) {
-         return "#ebe397"; // Middle risk
-      } else {
-         return "#e9e9e9";
-      }
+
+      if (rating < 1) rating = 1;
+      if (rating > totalParts) rating = totalParts;
+
+      const progress = parseFloat(((rating / totalParts) * 100).toFixed(2));
+
+      if (progress <= 40) return "#95c3af";
+      if (progress <= 70) return "#ebe397";
+      return "#e5c0c0";
    };
 
    const groupRiskScoreForPieChart = (data) => {
       const grouped = data.reduce((acc, item) => {
          const riskDefinition = item.risk_score?.definition || "Unfit"; // Get definition or default to "Unfit"
-         const riskValue = item.risk_score?.value?.toString() || "0"; // Convert value to string, default to "0"
 
          const existing = acc.find((entry) => entry.name === riskDefinition);
          if (existing) {

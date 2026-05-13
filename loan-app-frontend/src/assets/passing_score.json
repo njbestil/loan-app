@@ -1,0 +1,60 @@
+{
+  "status": "success",
+  "message": "Passing score data",
+  "data": [
+    {
+      "id": 1,
+      "category_id": 1,
+      "definition": "Pass",
+      "from": 12,
+      "to": 99,
+      "value": "pass",
+      "monthly_interest_rate": null
+    },
+    {
+      "id": 2,
+      "category_id": 2,
+      "definition": "Very high credit risk",
+      "from": 51,
+      "to": 60,
+      "value": "5",
+      "monthly_interest_rate": 2.10
+    },
+    {
+      "id": 3,
+      "category_id": 2,
+      "definition": "High credit risk",
+      "from": 61,
+      "to": 70,
+      "value": "4",
+      "monthly_interest_rate": 2.00
+    },
+    {
+      "id": 4,
+      "category_id": 2,
+      "definition": "Moderate credit risk",
+      "from": 71,
+      "to": 80,
+      "value": "3",
+      "monthly_interest_rate": 1.50
+    },
+    {
+      "id": 5,
+      "category_id": 2,
+      "definition": "Low credit risk",
+      "from": 81,
+      "to": 89,
+      "value": "2",
+      "monthly_interest_rate": 1.20
+    },
+    {
+      "id": 6,
+      "category_id": 2,
+      "definition": "Very low credit risk",
+      "from": 90,
+      "to": 100,
+      "value": "1",
+      "monthly_interest_rate": 1
+    }
+  ]
+}

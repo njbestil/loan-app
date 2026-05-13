@@ -1,0 +1,278 @@
+{
+  "status": "success",
+  "message": "Credit scoring data",
+  "data": [
+    {
+      "category": "Capacity to pay and Capital",
+      "criteria": [
+        {
+          "id": 1,
+          "description": "Net of Cash Flow",
+          "scoring": [
+            {
+              "label": "More than sufficient",
+              "score": 10
+            },
+            {
+              "label": "sufficient",
+              "score": 5
+            },
+            {
+              "label": "deficit",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "description": "Deb Service Ratio",
+          "scoring": [
+            {
+              "label": "More than sufficient",
+              "score": 10
+            },
+            {
+              "label": "sufficient",
+              "score": 5
+            },
+            {
+              "label": "deficit",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "description": "Repayment History",
+          "scoring": [
+            {
+              "label": "Good",
+              "score": 3
+            },
+            {
+              "label": "Delinquent",
+              "score": 2
+            },
+            {
+              "label": "Past Due",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Character and Management Quality",
+      "criteria": [
+        {
+          "id": 4,
+          "description": "Credit reputation",
+          "scoring": [
+            {
+              "label": "Good",
+              "score": 6
+            },
+            {
+              "label": "Delinquent",
+              "score": 3
+            },
+            {
+              "label": "Past Due",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "description": "Community Relations",
+          "scoring": [
+            {
+              "label": "Peaceful & Trusting",
+              "score": 6
+            },
+            {
+              "label": "Confronts & Suspicious",
+              "score": 3
+            },
+            {
+              "label": "Difficult to Handle",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "description": "Physical & Mental Health Impression",
+          "scoring": [
+            {
+              "label": "Very Good",
+              "score": 6
+            },
+            {
+              "label": "Good",
+              "score": 3
+            },
+            {
+              "label": "Sickly",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "description": "Quality of Family Life",
+          "scoring": [
+            {
+              "label": "Orderly & Simple",
+              "score": 6
+            },
+            {
+              "label": "Normal Stability",
+              "score": 3
+            },
+            {
+              "label": "Unstable; Disorderly",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "description": "Quality of Family Life",
+          "scoring": [
+            {
+              "label": "Orderly & Simple",
+              "score": 6
+            },
+            {
+              "label": "Normal Stability",
+              "score": 3
+            },
+            {
+              "label": "Unstable; Disorderly",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "description": "Impression during Interview",
+          "scoring": [
+            {
+              "label": "Positive & helpful",
+              "score": 6
+            },
+            {
+              "label": "Unsure & hesitant",
+              "score": 3
+            },
+            {
+              "label": "Negative & Evasive",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "description": "Competence with livelihood",
+          "scoring": [
+            {
+              "label": "High",
+              "score": 5
+            },
+            {
+              "label": "Normal",
+              "score": 3
+            },
+            {
+              "label": "Low",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Condition",
+      "criteria": [
+        {
+          "id": 11,
+          "description": "Successor to continue livelihood",
+          "scoring": [
+            {
+              "label": "Available",
+              "score": 5
+            },
+            {
+              "label": "For training",
+              "score": 3
+            },
+            {
+              "label": "none",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "description": "Impact of competition",
+          "scoring": [
+            {
+              "label": "Low effect",
+              "score": 5
+            },
+            {
+              "label": "Medium",
+              "score": 3
+            },
+            {
+              "label": "High effect",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "description": "Impact of any new regulation",
+          "scoring": [
+            {
+              "label": "Low effect",
+              "score": 5
+            },
+            {
+              "label": "Medium",
+              "score": 3
+            },
+            {
+              "label": "High effect",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Collateral",
+      "criteria": [
+        {
+          "id": 14,
+          "description": "Back-up resources for repayments",
+          "scoring": [
+            {
+              "label": "Strong",
+              "score": 15
+            },
+            {
+              "label": "Medium",
+              "score": 10
+            },
+            {
+              "label": "Weak",
+              "score": 5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

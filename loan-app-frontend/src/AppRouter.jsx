@@ -20,10 +20,10 @@ import CreateCreditModel from './features/models/pages/CreateCreditModel';
 import CreateRiskModel from './features/models/pages/CreateRiskModel';
 import PreEvaluation from './pages/dashboard/creditscore/PreEvaluation';
 import Evaluation from './pages/dashboard/creditscore/Evaluation';
-import Application from './pages/dashboard/creditdata/Application';
-import ApplicationReport from './pages/dashboard/creditdata/ApplicationReport';
-import ApplicantDetails from './pages/dashboard/creditdata/ApplicantDetails';
-import UserApplication from './pages/dashboard/creditdata/UserApplication';
+import Application from './features/applications/pages/Application';
+import ApplicationReport from './features/applications/pages/ApplicationReport';
+import ApplicantDetails from './features/applications/pages/ApplicantDetails';
+import UserApplication from './features/applications/pages/UserApplication';
 
 export default function AppRoutes() {
   return (

@@ -1,34 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Checkbox, Button, Breadcrumb, Dropdown, Table, Modal, Label, TextInput, Select, Toast, Spinner, Badge } from "flowbite-react";
-import { HiOutlineChip, HiOutlineChartPie, HiOutlineEye, HiXCircle, HiCheckCircle, HiFilter, HiHome, HiOutlineDotsVertical, HiPlus, HiCheck, HiExclamation } from "react-icons/hi";
+import { useState, useEffect } from 'react';
+import { Checkbox, Breadcrumb, Dropdown, Table, Label, TextInput, Toast, Spinner, Badge } from "flowbite-react";
+import { HiOutlineEye, HiXCircle, HiCheckCircle, HiFilter, HiHome, HiOutlineDotsVertical, HiCheck, HiExclamation } from "react-icons/hi";
 import Dashboard from "../../../layout/Dashboard";
-import userService from "../../../services/userService";
-import dataService from "../../../services/dataService";
+import applicationsService from "../services/applicationsService";
+import modelsService from "../../models/services/modelsService";
+import usersService from "../../users/services/usersService";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
-
-const formatPhoneNumber = (value) => {
-   // Remove all non-numeric characters
-   let cleaned = value.replace(/\D/g, "");
-
-   // Apply the format: 917 123 4567
-   let formatted = cleaned
-      .replace(/^(\d{0,3})?(\d{0,3})?(\d{0,5})?$/, (_, p1, p2, p3) => {
-         return [p1, p2, p3].filter(Boolean).join(" ");
-      });
-
-   // Prevent input from exceeding the intended format length (max: 12 chars)
-   return formatted.length > 12 ? reportForm.contact_number : formatted;
-};
 
 const formatDateTime = (dateString) => {
    const date = new Date(dateString);
    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
    const day = String(date.getDate()).padStart(2, "0");
    const year = date.getFullYear();
-   const hours = String(date.getHours()).padStart(2, "0");
-   const minutes = String(date.getMinutes()).padStart(2, "0");
-   const seconds = String(date.getSeconds()).padStart(2, "0");
 
    return `${month}-${day}-${year}`;
 };
@@ -38,25 +22,15 @@ export default function UserApplication() {
    const location = useLocation();
    const queryParams = new URLSearchParams(location.search);
 
-   const [cid, setCid] = useState(null);
-   const [rid, setRid] = useState(null);
-
    const [searchTerm, setSearchTerm] = useState("");
    const [statusFilter, setStatusFilter] = useState({ user: false, admin: false });
    const [toastMessage, setToastMessage] = useState(null);
-   const [loading, setLoading] = useState(false); // State for loading
    const [loadingScreen, setLoadingScreen] = useState(false); // State for loading
    const [users, setUsers] = useState([]);
    const [applications, setApplications] = useState([]);
    const [creditScoreData, setCreditScoreData] = useState([]);
    const [riskScoreData, setRiskScoreData] = useState([]);
    const [data, setData] = useState([]);
-   const [openModal, setOpenModal] = useState(true);
-   const [reportForm, setReportForm] = useState({
-      creditModel: null,
-      riskModel: null
-   });
-   
    const user = getUserData();
 
    function getUserData() {
@@ -77,7 +51,7 @@ export default function UserApplication() {
 
    const fetchUsers = async () => {
       try {
-         const response = await userService.getUsers();
+         const response = await usersService.list();
          setUsers(response.data); // Update the user list
       } catch (error) {
          console.error("Error fetching users:", error);
@@ -86,7 +60,7 @@ export default function UserApplication() {
 
    const fetchApplications = async () => {
       try {
-         const response = await dataService.getApplications();
+         const response = await applicationsService.list();
 
          if (response.success) {
             const filteredData = response.data.filter(app => app.user_id === user.id); // Filter where id = 1
@@ -100,7 +74,7 @@ export default function UserApplication() {
 
    const fetchCreditScore = async () => {
       try {
-         const response = await dataService.getCreditScore();
+         const response = await modelsService.listCreditScores();
 
          if (response.success) {
             setCreditScoreData(response.data);
@@ -112,7 +86,7 @@ export default function UserApplication() {
 
    const fetchRiskScore = async () => {
       try {
-         const response = await dataService.getRiskScore();
+         const response = await modelsService.listRiskScores();
 
          if (response.success) {
             setRiskScoreData(response.data);
@@ -154,10 +128,6 @@ export default function UserApplication() {
       }
    }, [users, applications, riskScoreData, creditScoreData]);
 
-   const handleSearchChange = (event) => {
-      setSearchTerm(event.target.value);
-   };
-
    const filteredData = data.filter(row => {
       const paddedUserId = row.user.id.toString().padStart(6, '0'); // Pads user.id to 6 digits
       const riskDefinition = (row.risk_score.definition) ? row.risk_score.definition : "";
@@ -184,19 +154,6 @@ export default function UserApplication() {
       localStorage.setItem("applicant_details", JSON.stringify(data));
 
       navigate(`/creditscoredata/application/details?${data.id}`);
-   };
-
-   const handleErrorResponse = (response) => {
-      let errorMessage = response || "Something went wrong!";
-
-      if (response) {
-         const firstErrorKey = Object.keys(response)[0]; // Get first field with an error
-         if (response[firstErrorKey] && response[firstErrorKey].length > 0) {
-            errorMessage = response[firstErrorKey][0]; // Get the first error message
-         }
-      }
-
-      setToastMessage({ type: "error", message: errorMessage });
    };
 
    const getRiskLevelColor = (riskScore, riskPassingScore) => {
@@ -244,8 +201,6 @@ export default function UserApplication() {
    const groupRiskScoreForPieChart = (data) => {
       const grouped = data.reduce((acc, item) => {
          const riskDefinition = item.risk_score?.definition || "Unfit"; // Get definition or default to "Unfit"
-         const riskValue = item.risk_score?.value?.toString() || "0"; // Convert value to string, default to "0"
-
          const existing = acc.find((entry) => entry.name === riskDefinition);
          if (existing) {
             existing.value += 1; // Increment occurrence count
@@ -270,39 +225,6 @@ export default function UserApplication() {
    };
 
    const pieData = groupRiskScoreForPieChart(filteredData);
-
-   // Handle form submission
-   const handleSubmit = (event) => {
-      event.preventDefault();
-      // After form submission, update cid and rid
-      setCid(reportForm.creditModel);
-      setRid(reportForm.riskModel);
-
-      // You can now use cid and rid for any other logic or API calls
-      console.log("Selected Credit Model ID:", reportForm.creditModel);
-      console.log("Selected Risk Model ID:", reportForm.riskModel);
-
-      onCloseModal();
-   };
-
-   function onCloseModal() {
-      setOpenModal(false);
-   }
-
-   // Handle form data changes
-   const handleChange = (e) => {
-      const { name, value } = e.target;
-      setReportForm((prevData) => ({
-         ...prevData,
-         [name]: value
-      }));
-   };
-
-   const handleNavigate = () => {
-      if (filteredData.length > 0) {
-         navigate(`/creditscoredata/application/report?cid=${cid}&rid=${rid}`);
-      }
-   };
 
    if (loadingScreen) {
       return (

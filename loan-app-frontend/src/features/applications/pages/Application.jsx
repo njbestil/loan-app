@@ -1,34 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Checkbox, Button, Breadcrumb, Dropdown, Table, Modal, Label, TextInput, Select, Toast, Spinner, Badge } from "flowbite-react";
-import { HiOutlineChip, HiOutlineChartPie, HiOutlineEye, HiXCircle, HiCheckCircle, HiFilter, HiHome, HiOutlineDotsVertical, HiPlus, HiCheck, HiExclamation } from "react-icons/hi";
+import { useState, useEffect } from 'react';
+import { Checkbox, Button, Breadcrumb, Dropdown, Table, Modal, Label, TextInput, Toast, Spinner, Badge } from "flowbite-react";
+import { HiOutlineChip, HiOutlineChartPie, HiOutlineEye, HiXCircle, HiCheckCircle, HiFilter, HiHome, HiOutlineDotsVertical, HiCheck, HiExclamation } from "react-icons/hi";
 import Dashboard from "../../../layout/Dashboard";
-import userService from "../../../services/userService";
-import dataService from "../../../services/dataService";
+import applicationsService from "../services/applicationsService";
+import modelsService from "../../models/services/modelsService";
+import usersService from "../../users/services/usersService";
 import { useNavigate } from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
-
-const formatPhoneNumber = (value) => {
-   // Remove all non-numeric characters
-   let cleaned = value.replace(/\D/g, "");
-
-   // Apply the format: 917 123 4567
-   let formatted = cleaned
-      .replace(/^(\d{0,3})?(\d{0,3})?(\d{0,5})?$/, (_, p1, p2, p3) => {
-         return [p1, p2, p3].filter(Boolean).join(" ");
-      });
-
-   // Prevent input from exceeding the intended format length (max: 12 chars)
-   return formatted.length > 12 ? reportForm.contact_number : formatted;
-};
 
 const formatDateTime = (dateString) => {
    const date = new Date(dateString);
    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
    const day = String(date.getDate()).padStart(2, "0");
    const year = date.getFullYear();
-   const hours = String(date.getHours()).padStart(2, "0");
-   const minutes = String(date.getMinutes()).padStart(2, "0");
-   const seconds = String(date.getSeconds()).padStart(2, "0");
 
    return `${month}-${day}-${year}`;
 };
@@ -41,8 +25,7 @@ export default function Application() {
    const [searchTerm, setSearchTerm] = useState("");
    const [statusFilter, setStatusFilter] = useState({ user: false, admin: false });
    const [toastMessage, setToastMessage] = useState(null);
-   const [loading, setLoading] = useState(false); // State for loading
-   const [loadingScreen, setLoadingScreen] = useState(false); // State for loading
+   const [loadingScreen] = useState(false); // State for loading
    const [users, setUsers] = useState([]);
    const [applications, setApplications] = useState([]);
    const [creditScoreData, setCreditScoreData] = useState([]);
@@ -57,7 +40,7 @@ export default function Application() {
    const fetchUsers = async () => {
       try {
          //setLoadingScreen(true);
-         const response = await userService.getUsers();
+         const response = await usersService.list();
 
          if (response.success) {
             setUsers(response.data); // Update the user list
@@ -72,7 +55,7 @@ export default function Application() {
    const fetchApplications = async () => {
       try {
          //setLoadingScreen(true);
-         const response = await dataService.getApplications();
+         const response = await applicationsService.list();
 
          if (response.success) {
             const filteredData = response.data.filter(app => app.credit_score_id === parseInt(cid) && app.risk_score_id === parseInt(rid)); // Filter where id = 1
@@ -89,7 +72,7 @@ export default function Application() {
    const fetchCreditScore = async () => {
       try {
          //setLoadingScreen(true);
-         const response = await dataService.getCreditScore();
+         const response = await modelsService.listCreditScores();
 
          if (response.success) {
             //const filteredData = response.data.filter(item => item.is_deleted != true);
@@ -105,7 +88,7 @@ export default function Application() {
    const fetchRiskScore = async () => {
       try {
          //setLoadingScreen(true);
-         const response = await dataService.getRiskScore();
+         const response = await modelsService.listRiskScores();
 
          if (response.success) {
             //const filteredData = response.data.filter(item => item.is_deleted != true);
@@ -165,10 +148,6 @@ export default function Application() {
       }
     }, [cid, rid]);
 
-   const handleSearchChange = (event) => {
-      setSearchTerm(event.target.value);
-   };
-
    const filteredData = data.filter(row => {
       // users removed/deleted
       if (!row.user) return false;
@@ -198,19 +177,6 @@ export default function Application() {
       localStorage.setItem("applicant_details", JSON.stringify(data));
 
       navigate(`/creditscoredata/application/details?${data.id}`);
-   };
-
-   const handleErrorResponse = (response) => {
-      let errorMessage = response || "Something went wrong!";
-
-      if (response) {
-         const firstErrorKey = Object.keys(response)[0]; // Get first field with an error
-         if (response[firstErrorKey] && response[firstErrorKey].length > 0) {
-            errorMessage = response[firstErrorKey][0]; // Get the first error message
-         }
-      }
-
-      setToastMessage({ type: "error", message: errorMessage });
    };
 
    const getRiskLevelColor = (riskScore, riskPassingScore) => {
@@ -283,8 +249,6 @@ export default function Application() {
    const groupRiskScoreForPieChart = (data) => {
       const grouped = data.reduce((acc, item) => {
          const riskDefinition = item.risk_score?.definition || "Unfit"; // Get definition or default to "Unfit"
-         const riskValue = item.risk_score?.value?.toString() || "0"; // Convert value to string, default to "0"
-
          const existing = acc.find((entry) => entry.name === riskDefinition);
          if (existing) {
             existing.value += 1; // Increment occurrence count

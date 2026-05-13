@@ -1,66 +1,33 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Card, Accordion, Button, Breadcrumb, Toast, Spinner, Badge, Table } from "flowbite-react";
-import { HiOutlineChartPie, HiOutlineEye, HiXCircle, HiCheckCircle, HiFilter, HiHome, HiOutlineDotsVertical, HiPlus, HiCheck, HiExclamation } from "react-icons/hi";
+import { useState, useEffect } from 'react';
+import { Card, Accordion, Breadcrumb, Toast, Spinner, Table } from "flowbite-react";
+import { HiHome, HiCheck, HiExclamation } from "react-icons/hi";
 import Dashboard from "../../../layout/Dashboard";
-import userService from "../../../services/userService";
-import dataService from "../../../services/dataService";
-import { useNavigate } from "react-router-dom";
+import applicationsService from "../services/applicationsService";
+import modelsService from "../../models/services/modelsService";
+import usersService from "../../users/services/usersService";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useSearchParams } from "react-router-dom";
 
 
-const formatPhoneNumber = (value) => {
-   // Remove all non-numeric characters
-   let cleaned = value.replace(/\D/g, "");
-
-   // Apply the format: 917 123 4567
-   let formatted = cleaned
-      .replace(/^(\d{0,3})?(\d{0,3})?(\d{0,5})?$/, (_, p1, p2, p3) => {
-         return [p1, p2, p3].filter(Boolean).join(" ");
-      });
-
-   // Prevent input from exceeding the intended format length (max: 12 chars)
-   return formatted.length > 12 ? formData.contact_number : formatted;
-};
-
-const formatDateTime = (dateString) => {
-   const date = new Date(dateString);
-   const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-   const day = String(date.getDate()).padStart(2, "0");
-   const year = date.getFullYear();
-   const hours = String(date.getHours()).padStart(2, "0");
-   const minutes = String(date.getMinutes()).padStart(2, "0");
-   const seconds = String(date.getSeconds()).padStart(2, "0");
-
-   return `${month}-${day}-${year}`;
-};
-
 export default function ApplicationReport() {
-   const navigate = useNavigate();
    const [searchParams] = useSearchParams();
    const cid = parseInt(searchParams.get("cid"));
    const rid = parseInt(searchParams.get("rid"));
 
-   const [searchTerm, setSearchTerm] = useState("");
-   const [statusFilter, setStatusFilter] = useState({ user: false, admin: false });
+   const [searchTerm] = useState("");
    const [toastMessage, setToastMessage] = useState(null);
-   const [loading, setLoading] = useState(false); // State for loading
    const [loadingScreen, setLoadingScreen] = useState(true); // State for loading
-   const [errors, setErrors] = useState({});
    const [users, setUsers] = useState([]);
    const [applications, setApplications] = useState([]);
    const [creditScoreData, setCreditScoreData] = useState([]);
    const [riskScoreData, setRiskScoreData] = useState([]);
-   const [selectedUser, setSelectedUser] = useState(null);
    const [data, setData] = useState([]);
    const [riskGroupData, setRiskGroupData] = useState([]);
-
-   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
    const fetchUsers = async () => {
       try {
          //setLoadingScreen(true);
-         const response = await userService.getUsers();
+         const response = await usersService.list();
 
          if (response.success) {
             setUsers(response.data); // Update the user list
@@ -75,7 +42,7 @@ export default function ApplicationReport() {
    const fetchApplications = async () => {
       try {
          //setLoadingScreen(true);
-         const response = await dataService.getApplications();
+         const response = await applicationsService.list();
 
          if (response.success) {
             const filteredData = response.data.filter(app => app.credit_score_id === cid && app.risk_score_id === rid); // Filter where id = 1
@@ -95,10 +62,9 @@ export default function ApplicationReport() {
    const fetchCreditScore = async () => {
       try {
          //setLoadingScreen(true);
-         const response = await dataService.getCreditScore();
+         const response = await modelsService.listCreditScores();
 
          if (response.success) {
-            const filteredData = response.data.filter(app => app.id === cid);
             setCreditScoreData(response.data);
          }
       } catch (error) {
@@ -111,10 +77,9 @@ export default function ApplicationReport() {
    const fetchRiskScore = async () => {
       try {
          //setLoadingScreen(true);
-         const response = await dataService.getRiskScore();
+         const response = await modelsService.listRiskScores();
 
          if (response.success) {
-            const filteredData = response.data.filter(app => app.id === rid);
             setRiskScoreData(response.data);
          }
       } catch (error) {
@@ -221,10 +186,6 @@ export default function ApplicationReport() {
       }
    }, [users, applications, riskScoreData, creditScoreData]);
 
-   const handleSearchChange = (event) => {
-      setSearchTerm(event.target.value);
-   };
-
    const filteredData = data.filter(row => {
       if (!row.user || !row.risk || !row.credit) return false;
 
@@ -241,12 +202,7 @@ export default function ApplicationReport() {
          row.created_at?.toLowerCase().includes(search) ||
          riskDefinition.toLowerCase().includes(search);
 
-      const matchesRole =
-         (!statusFilter.fail && !statusFilter.pass) || // If both filters are off, show all
-         (statusFilter.fail && row.status?.toLowerCase() === "fail") || // Check lowercase to prevent case issues
-         (statusFilter.pass && row.status?.toLowerCase() === "pass");
-
-      return matchesSearch && matchesRole;
+      return matchesSearch;
    });
 
    const getPieColor = (riskScore, riskPassingScore) => {
@@ -446,7 +402,7 @@ export default function ApplicationReport() {
                                                          outerRadius="60%" // use percentage for responsiveness
                                                          fill="#8884d8"
                                                          dataKey="value"
-                                                         label={({ name, value }) => `${value}%`}
+                                                         label={({ value }) => `${value}%`}
                                                       >
                                                          {getChartData(items).map((entry, index) => (
                                                             <Cell key={`cell-${index}`} fill={entry.color} />

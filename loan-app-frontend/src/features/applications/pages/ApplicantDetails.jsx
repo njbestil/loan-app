@@ -1,31 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Toast, Button, Checkbox, Label, TextInput, Select, Breadcrumb, Spinner, Modal, Textarea, Radio, Progress, Timeline, Flowbite, Table, Card } from "flowbite-react";
+import { useState, useEffect } from 'react';
+import { Toast, Button, Label, TextInput, Breadcrumb, Spinner, Textarea, Progress, Timeline, Flowbite, Table, Card } from "flowbite-react";
 import {
-   HiCheck, HiExclamation, HiHome, HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineExclamationCircle,
-   HiOutlineCheckCircle, HiOutlineCash, HiOutlineShieldExclamation, HiArrowNarrowRight, HiArrowLeft
+   HiCheck, HiExclamation, HiHome,
+   HiOutlineCash, HiOutlineShieldExclamation, HiArrowLeft
 } from "react-icons/hi";
 import Dashboard from "../../../layout/Dashboard";
-import userService from "../../../services/userService";
-import dataService from "../../../services/dataService";
-import { useLocation, useNavigate } from "react-router-dom";
-
-const useQueryParams = () => {
-   return new URLSearchParams(useLocation().search);
-};
-
-const formatPhoneNumber = (value) => {
-   // Remove all non-numeric characters
-   let cleaned = value.replace(/\D/g, "");
-
-   // Apply the format: 917 123 4567
-   let formatted = cleaned
-      .replace(/^(\d{0,3})?(\d{0,3})?(\d{0,5})?$/, (_, p1, p2, p3) => {
-         return [p1, p2, p3].filter(Boolean).join(" ");
-      });
-
-   // Prevent input from exceeding the intended format length (max: 12 chars)
-   return formatted.length > 12 ? formData.contact_number : formatted;
-};
+import { useNavigate } from "react-router-dom";
 
 const getProgress = (rating, totalParts) => {
    // Convert rating and totalParts to numbers
@@ -49,18 +29,6 @@ const getProgress = (rating, totalParts) => {
    return calc;
 };
 
-const formatDateTime = (dateString) => {
-   const date = new Date(dateString);
-   const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-   const day = String(date.getDate()).padStart(2, "0");
-   const year = date.getFullYear();
-   const hours = String(date.getHours()).padStart(2, "0");
-   const minutes = String(date.getMinutes()).padStart(2, "0");
-   const seconds = String(date.getSeconds()).padStart(2, "0");
-
-   return `${month}-${day}-${year}`;
-};
-
 const sumScores = (data) => {
    return data.reduce((total, category) => {
       const categorySum = category.criteria.reduce((sum, item) => sum + item.score, 0);
@@ -76,19 +44,10 @@ export default function ApplicantDetails() {
    };
 
    const navigate = useNavigate();
-   const query = useQueryParams();
 
-   const [searchTerm, setSearchTerm] = useState("");
-   const [statusFilter, setStatusFilter] = useState({ user: false, admin: false });
    const [toastMessage, setToastMessage] = useState(null);
-   const [loading, setLoading] = useState(false); // State for loading
-   const [loadingScreen, setLoadingScreen] = useState(false); // State for loading
-   const [errors, setErrors] = useState({});
+   const [loadingScreen] = useState(false); // State for loading
    const [user, setUser] = useState([]);
-   const [applications, setApplications] = useState([]);
-   const [creditScoreData, setCreditScoreData] = useState([]);
-   const [riskScoreData, setRiskScoreData] = useState([]);
-   const [selectedUser, setSelectedUser] = useState(null);
    const [data, setData] = useState([]);
    const [creditScoreResult, setCreditScoreResult] = useState([]);
    const [creditScore, setCreditScore] = useState(0);
@@ -114,7 +73,6 @@ export default function ApplicantDetails() {
 
       // Risk
       if (applicantDetails.risk) {
-         setRiskScoreData(applicantDetails.risk);
          setRiskPassingScore(JSON.parse(applicantDetails.risk.passing_score));
       }
       if (applicantDetails.risk_score && Object.keys(applicantDetails.risk_score).length > 0) {
@@ -145,19 +103,6 @@ export default function ApplicantDetails() {
       return "red";  // High Risk
    };
 
-
-   const handleErrorResponse = (response) => {
-      let errorMessage = response || "Something went wrong!";
-
-      if (response) {
-         const firstErrorKey = Object.keys(response)[0]; // Get first field with an error
-         if (response[firstErrorKey] && response[firstErrorKey].length > 0) {
-            errorMessage = response[firstErrorKey][0]; // Get the first error message
-         }
-      }
-
-      setToastMessage({ type: "error", message: errorMessage });
-   };
 
    if (loadingScreen) {
       return (

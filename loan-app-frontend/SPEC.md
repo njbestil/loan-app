@@ -45,6 +45,9 @@ src/
     models/
       pages/
       services/
+    applications/
+      pages/
+      services/
   services/
     api.js
     dataService.js
@@ -109,10 +112,11 @@ Located mostly in:
 
 - `src/pages/dashboard/creditscore/PreEvaluation.jsx`
 - `src/pages/dashboard/creditscore/Evaluation.jsx`
-- `src/pages/dashboard/creditdata/Application.jsx`
-- `src/pages/dashboard/creditdata/UserApplication.jsx`
-- `src/pages/dashboard/creditdata/ApplicantDetails.jsx`
-- `src/pages/dashboard/creditdata/ApplicationReport.jsx`
+- `src/features/applications/pages/Application.jsx`
+- `src/features/applications/pages/UserApplication.jsx`
+- `src/features/applications/pages/ApplicantDetails.jsx`
+- `src/features/applications/pages/ApplicationReport.jsx`
+- `src/features/applications/services/applicationsService.js`
 - `src/services/dataService.js`
 
 This area contains most of the domain logic: scoring calculations, risk grouping, reporting, application creation, and chart data preparation.
@@ -353,6 +357,8 @@ Current refactor progress:
 - User pages use `src/features/users/services/usersService.js` as a feature-level facade over the legacy `userService`.
 - Model pages have been moved into `src/features/models/pages`.
 - Model pages use `src/features/models/services/modelsService.js` as a feature-level facade over the legacy `dataService`.
+- Application/report pages have been moved into `src/features/applications/pages`.
+- Application/report pages use `src/features/applications/services/applicationsService.js`, plus existing feature facades for users and models where needed.
 - `App.jsx` no longer contains the unused Vite starter state.
 - `userService.changePassword` now reads reset query parameters through `api.getQueryParam`.
 

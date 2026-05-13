@@ -1,0 +1,25 @@
+# Dependencies and build output
+**/node_modules/
+**/vendor/
+**/dist/
+
+# Local environment and secrets
+**/.env
+**/.env.*
+!**/.env.example
+**/.rnd
+**/storage/oauth-*.key
+
+# Logs and runtime cache
+**/*.log
+**/storage/logs/
+**/storage/framework/cache/
+**/storage/framework/sessions/
+**/storage/framework/views/
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

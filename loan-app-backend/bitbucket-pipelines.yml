@@ -1,0 +1,10 @@
+image: php:7.4
+
+pipelines:
+  default:
+    - step:
+        name: Deploy to cPanel
+        deployment: production
+        script:
+          - apt-get update && apt-get install -y rsync openssh-client
+          - rsync -r --delete-after --quiet $BITBUCKET_CLONE_DIR/ qbzwrzeao9m2@avidhilda.com:/public_html/api.thoiltrading.com

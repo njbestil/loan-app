@@ -1,39 +1,51 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, Label, TextInput, Breadcrumb, Table, Card, Toast, Modal, Carousel, Tooltip } from "flowbite-react";
-import { Link } from 'react-router-dom';
 import { HiHome, HiCheck, HiOutlineQuestionMarkCircle, HiPlus, HiOutlineTrash, HiExclamation } from "react-icons/hi";
 import Dashboard from "../../../layout/Dashboard";
-import dataService from "../../../services/dataService";
+import modelsService from "../services/modelsService";
 
-export default function CreateCreditModel() {
+export default function CreateRiskModel() {
    const [toastMessage, setToastMessage] = useState(null);
-   const [loading, setLoading] = useState(false);
+   const [loading, setLoading] = useState(false); // State for loading
    const [scoreForm, setScoreForm] = useState([]);
    const [openModal, setOpenModal] = useState(false);
    const [openGuide, setOpenGuide] = useState(false);
-   const [passingForm, setPassingForm] = useState([
-      {
-         definition: null,
-         from: null,
-         to: 100,
-         value: null,
-         monthly_intereset_rate: null
-      }
-   ]);
    const [formData, setFormData] = useState([
       {
          category: "",
          criteria: [{ id: 1, description: "", scoring: [{ label: "", score: 0 }] }]
       }
    ]);
-   const [infoData, setInfoData] = useState({ name: null });
-   const [maxId, setMaxId] = useState(1);
+   const [infoData, setInfoData] = useState({
+      name: null
+   })
    const [editingIndex, setEditingIndex] = useState(null);
 
+   // Passing score
+
+   const [creditRisks, setCreditRisks] = useState([
+      { definition: "", from: "", to: "", value: "", monthly_interest_rate: "" },
+   ]);
+
+   const handleRiskChange = (index, field, value) => {
+      const updatedRisks = [...creditRisks];
+      updatedRisks[index][field] = value;
+      setCreditRisks(updatedRisks);
+   };
+
+   const addCreditRisk = () => {
+      setCreditRisks([
+         ...creditRisks,
+         { definition: "", from: "", to: "", value: "", monthly_interest_rate: "" },
+      ]);
+   };
+
+   const [maxId, setMaxId] = useState(1);
+
    const getNextId = () => {
-      const nextId = maxId + 1;
-      setMaxId(nextId);
-      return nextId;
+      const nextId = maxId + 1; // Increment the current maxId
+      setMaxId(nextId); // Update the maxId state
+      return nextId; // Return the incremented ID
    };
 
    const handleCategoryChange = (index, value) => {
@@ -65,7 +77,7 @@ export default function CreateCreditModel() {
 
    const addCriterion = (catIndex) => {
       const newFormData = [...formData];
-      const nextId = getNextId();
+      const nextId = getNextId(); //getNextId(newFormData);
       newFormData[catIndex].criteria.push({ id: nextId, description: "", scoring: [{ label: "", score: 0 }] });
       setFormData(newFormData);
    };
@@ -112,16 +124,23 @@ export default function CreateCreditModel() {
    };
 
    const validateForm = () => {
-      let flag = 0;
+      var flag = 0;
       for (const section of formData) {
-         if (!section.category.trim()) flag++;
+         if (!section.category.trim()) {
+            flag++;
+         }
          for (const criterion of section.criteria) {
-            if (!criterion.description.trim()) flag++;
+            if (!criterion.description.trim()) {
+               flag++;
+            }
             for (const score of criterion.scoring) {
-               if (!score.label.trim() || score.score === null || score.score === '') flag++;
+               if (!score.label.trim() || score.score === null || score.score === '') {
+                  flag++;
+               }
             }
          }
       }
+
       return flag <= 0;
    };
 
@@ -130,31 +149,33 @@ export default function CreateCreditModel() {
          setToastMessage({ type: "error", message: "Please fill out all fields correctly before submitting." });
          return;
       }
-
       setOpenModal(false);
+      console.log("Generated JSON: ", JSON.stringify(formData, null, 2));
 
-      setScoreForm((prevState) => {
-         if (editingIndex !== null) {
-            // Replace the item at editingIndex
+      if (editingIndex !== null) {
+         // Edit existing item
+         setScoreForm(prevState => {
             const updated = [...prevState];
-            updated[editingIndex] = formData[0]; // formData is array of one element
+            updated[editingIndex] = formData[0]; // replace the item being edited
             return updated;
-         } else {
-            // Add new item
-            return [...prevState, ...formData];
-         }
-      });
+         });
+         setEditingIndex(null); // reset editing state
+      } else {
+         // Add new item
+         setScoreForm(prevState => [...prevState, ...formData]);
+      }
 
       clearFormData();
-      setEditingIndex(null); // reset editing state
+      setFormData([
+         {
+            category: "",
+            criteria: [{ id: getNextId(), description: "", scoring: [{ label: "", score: 0 }] }]
+         }
+      ]);
+
+      console.log("Score form: ", JSON.stringify(scoreForm, null, 2));
    };
 
-   const handleEdit = (index) => {
-      const itemToEdit = scoreForm[index];
-      setFormData([JSON.parse(JSON.stringify(itemToEdit))]); // deep copy
-      setEditingIndex(index); // track which item is being edited
-      setOpenModal(true);
-   };
 
    const handleRemove = (index) => {
       const newScoreForm = [...scoreForm];
@@ -162,18 +183,23 @@ export default function CreateCreditModel() {
       setScoreForm(newScoreForm);
    };
 
+   const handleEdit = (index) => {
+      setEditingIndex(index);
+      const itemToEdit = scoreForm[index];
+      setFormData([JSON.parse(JSON.stringify(itemToEdit))]); // deep copy
+      setOpenModal(true);
+   };
+
    const handleChange = (e) => {
       const { name, value } = e.target;
-      if (name === "name") {
-         setInfoData((prev) => ({ ...prev, [name]: value }));
-      } else if (name === "definition" || name === "from") {
-         setPassingForm((prev) => [
-            {
-               ...prev[0],
-               [name]: name === "from" ? +value : value
-            }
-         ]);
+
+      if (name == "name") {
+         setInfoData(prevState => ({
+            ...prevState,
+            [name]: value
+         }));
       }
+
    };
 
    const validateCreateModelForm = () => {
@@ -182,8 +208,12 @@ export default function CreateCreditModel() {
          return false;
       }
 
-      for (const item of passingForm) {
-         if (!item.definition || !item.from) {
+      for (const item of creditRisks) {
+         if (!item.definition || item.definition.trim() === "" ||
+            !item.from || item.from.trim() === "" ||
+            !item.to || item.to.trim() === "" ||
+            !item.value || item.value.trim() === "" ||
+            !item.monthly_interest_rate || item.monthly_interest_rate.trim() === "") {
             setToastMessage({ type: "error", message: "Passing score fields are required." });
             return false;
          }
@@ -197,63 +227,79 @@ export default function CreateCreditModel() {
       return true;
    };
 
+
    const handleCreateModel = async () => {
       if (!validateCreateModelForm()) return;
 
-      const payload = {
+      var payload = {
          name: infoData.name,
-         passing_score: JSON.stringify(passingForm),
+         passing_score: JSON.stringify(creditRisks),
          score_form: JSON.stringify(scoreForm)
-      };
+      }
 
       setLoading(true);
+
       try {
-         const response = await dataService.createCreditScore(payload);
+         const response = await modelsService.createRiskScore(payload);
+
          if (response.success) {
-            setToastMessage({ type: "success", message: "Credit Model created successfully!" });
+            setToastMessage({ type: "success", message: "Risk Model created successfully!" });
+
+            //reset
             resetForm();
          } else {
             handleErrorResponse(response);
          }
+
       } catch (error) {
          if (!error.success) {
+            // Handle API error response (status 404, etc.)
             if (error.length > 0) setToastMessage({ type: "error", message: error });
             else handleErrorResponse(error.errors);
          } else {
+            // Handle network errors or unexpected issues
             setToastMessage({ type: "error", message: "Something went wrong. Please try again." });
             console.error("Error:", error);
          }
       } finally {
-         setLoading(false);
+         setLoading(false); // Hide loading
       }
    };
 
    const handleErrorResponse = (response) => {
       let errorMessage = response || "Something went wrong!";
+
       if (response) {
-         const firstErrorKey = Object.keys(response)[0];
+         const firstErrorKey = Object.keys(response)[0]; // Get first field with an error
          if (response[firstErrorKey] && response[firstErrorKey].length > 0) {
-            errorMessage = response[firstErrorKey][0];
+            errorMessage = response[firstErrorKey][0]; // Get the first error message
          }
       }
+
       setToastMessage({ type: "error", message: errorMessage });
    };
 
    const resetForm = () => {
-      setInfoData({ name: null });
-      setPassingForm([
+      setInfoData({
+         name: null
+      });
+
+      setCreditRisks([
+         { definition: "", from: "", to: "", value: "", monthly_interest_rate: "" },
+      ]);
+
+      setScoreForm([]);
+
+      setFormData([
          {
-            definition: null,
-            from: null,
-            to: 100,
-            value: null,
-            monthly_intereset_rate: null
+            category: "",
+            criteria: [{ id: getNextId(), description: "", scoring: [{ label: "", score: 0 }] }]
          }
       ]);
-      setScoreForm([]);
+
       clearFormData();
       setMaxId(1);
-   };
+   }
 
    return (
       <Dashboard>
@@ -261,7 +307,7 @@ export default function CreateCreditModel() {
             <div className='mb-5'>
                <div className="mb-5 flex justify-between items-center">
                   <h5 className="uppercase text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                     CREATE CREDIT MODEL
+                     CREATE RISK MODEL
                   </h5>
                   <Tooltip content="User Guide">
                      <HiOutlineQuestionMarkCircle onClick={() => setOpenGuide(true)} className="h-6 w-6 text-gray-500 hover:cursor-pointer hover:text-black" />
@@ -273,7 +319,7 @@ export default function CreateCreditModel() {
                      Home
                   </Breadcrumb.Item>
                   <Breadcrumb.Item href="/models">Manage Models</Breadcrumb.Item>
-                  <Breadcrumb.Item>Create Credit Model</Breadcrumb.Item>
+                  <Breadcrumb.Item>Create Risk Model</Breadcrumb.Item>
                </Breadcrumb>
             </div>
 
@@ -327,7 +373,7 @@ export default function CreateCreditModel() {
                   </div>
                   <div className="mb-10 grid gap-5">
                      <div>
-                        <Label htmlFor="name" value="Credit Score Name" />
+                        <Label htmlFor="name" value="Risk Score Name" />
                         <TextInput
                            id="name"
                            name="name"
@@ -345,32 +391,72 @@ export default function CreateCreditModel() {
                         PASSING SCORE
                      </h5>
                   </div>
-                  <div className="mb-10 grid grid-cols-2 gap-5">
-                     <div>
-                        <Label htmlFor="definition" value="Definition" />
-                        <TextInput
-                           id="definition"
-                           name="definition"
-                           placeholder="Enter definition"
-                           value={passingForm[0].definition ? passingForm[0].definition.charAt(0).toUpperCase() + passingForm[0].definition.slice(1) : ""}
-                           color={passingForm[0].definition == null ? "gray" : passingForm[0].definition ? "success" : "failure"}
-                           onChange={handleChange}
-                           required
-                        />
-                     </div>
-                     <div>
-                        <Label htmlFor="from" value="Passing Score" />
-                        <TextInput
-                           id="from"
-                           name="from"
-                           placeholder="Enter passing score"
-                           value={passingForm[0].from || ""}
-                           color={passingForm[0].from == null ? "gray" : passingForm[0].from ? "success" : "failure"}
-                           type="number"
-                           onChange={handleChange}
-                           required
-                        />
-                     </div>
+                  <div className="space-y-6 p-4">
+                     <Card className="mb-4">
+                        <div className="pb-3 flex justify-between items-center mb-5 border-b-2 border-gray-400">
+                           <h5 className="uppercase text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                              Score
+                           </h5>
+                           <Button color="success" size="xs" onClick={addCreditRisk} >
+                              <HiPlus className="h-5 w-5" />
+                           </Button>
+                        </div>
+                        {creditRisks.map((risk, index) => (
+                           <div key={index} className='grid grid-cols-5 gap-2 mb-5'>
+                              <div>
+                                 <Label>Definition</Label>
+                                 <TextInput
+                                    type="text"
+                                    value={risk.definition ? risk.definition.charAt(0).toUpperCase() + risk.definition.slice(1) : ""}
+                                    onChange={(e) => handleRiskChange(index, "definition", e.target.value)}
+                                    placeholder="Definition"
+                                 />
+                              </div>
+                              <div>
+                                 <Label>From</Label>
+                                 <TextInput
+                                    type="number"
+                                    value={risk.from}
+                                    onChange={(e) => handleRiskChange(index, "from", e.target.value)}
+                                    placeholder="From"
+                                 />
+                              </div>
+                              <div>
+                                 <Label>To</Label>
+                                 <TextInput
+                                    type="number"
+                                    value={risk.to}
+                                    onChange={(e) => handleRiskChange(index, "to", e.target.value)}
+                                    placeholder="To"
+                                 />
+                              </div>
+                              <div>
+                                 <Label>Value</Label>
+                                 <TextInput
+                                    type="text"
+                                    value={risk.value ? risk.value.charAt(0).toUpperCase() + risk.value.slice(1) : ""}
+                                    onChange={(e) => handleRiskChange(index, "value", e.target.value)}
+                                    placeholder="Value"
+                                 />
+                              </div>
+                              <div>
+                                 <Label>Monthly Interest Rate</Label>
+                                 <TextInput
+                                    type="number"
+                                    step="0.01"
+                                    value={risk.monthly_interest_rate}
+                                    onChange={(e) => handleRiskChange(index, "monthly_interest_rate", e.target.value)}
+                                    placeholder="Monthly Interest Rate"
+                                 />
+                              </div>
+                           </div>
+                        ))}
+                     </Card>
+
+                     {/* <div className="flex gap-4">
+                        <Button onClick={addCreditRisk}>Add Credit Risk</Button>
+                        <Button onClick={generateJSON} color="success">Generate JSON</Button>
+                     </div> */}
                   </div>
                </div>
 
@@ -396,7 +482,7 @@ export default function CreateCreditModel() {
                         <Table hoverable={true}>
                            <Table.Head>
                               <Table.HeadCell>Criteria Group</Table.HeadCell>
-                              <Table.HeadCell className='w-32 text-center'>Action</Table.HeadCell>
+                              <Table.HeadCell className='w-16'>Action</Table.HeadCell>
                            </Table.Head>
                            <Table.Body className="divide-y">
                               {scoreForm.length === 0 ? (
@@ -437,9 +523,7 @@ export default function CreateCreditModel() {
                      setOpenModal(false);
                      clearFormData();
                   }}>
-                     <Modal.Header>
-                        {editingIndex !== null ? "Edit Criterion" : "Add Criterion"}
-                     </Modal.Header>
+                     <Modal.Header>Add Criterion</Modal.Header>
                      <Modal.Body>
                         {formData.map((section, catIndex) => (
                            <div key={catIndex}>
@@ -465,7 +549,7 @@ export default function CreateCreditModel() {
                                  />
                               </div>
 
-                              {[...section.criteria].slice().reverse().map((criterion, displayIndex) => {
+                              {[...section.criteria].slice().reverse().map((criterion) => {
                                  // Find original index in the non-reversed array
                                  const critIndex = section.criteria.findIndex(c => c.id === criterion.id);
 
@@ -487,7 +571,7 @@ export default function CreateCreditModel() {
                                           <div key={scoreIndex} className="flex gap-2 mb-2 items-center">
                                              <TextInput
                                                 placeholder="Label"
-                                                className="capitalize flex-1"
+                                                className="flex-1"
                                                 value={score.label}
                                                 onChange={(e) => {
                                                    const value = e.target.value;
@@ -514,7 +598,6 @@ export default function CreateCreditModel() {
                                                 <HiOutlineTrash className='text-lg' />
                                              </Button>
                                           </div>
-
                                        ))}
                                        <Button color="success" onClick={() => addScore(catIndex, critIndex)} className="mb-4">Add Score Option</Button>
                                     </Card>

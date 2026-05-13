@@ -1,19 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Button, Checkbox, Label, TextInput, Select, Breadcrumb, Tabs, Card, Table, Spinner, Dropdown, Modal, Toast } from "flowbite-react";
-import { Link, useNavigate } from 'react-router-dom';
-import { HiOutlineEye, HiExclamation, HiCheck, HiOutlineExclamationCircle, HiPlus, HiFilter, HiHome, HiOutlineCash, HiOutlineShieldExclamation, HiOutlineDotsVertical, HiOutlinePencilAlt, HiOutlineLockClosed, HiOutlineTrash } from "react-icons/hi";
+import { useState, useEffect } from 'react';
+import { Button, TextInput, Breadcrumb, Tabs, Table, Spinner, Dropdown, Modal, Toast } from "flowbite-react";
+import { useNavigate } from 'react-router-dom';
+import { HiOutlineEye, HiExclamation, HiCheck, HiOutlineExclamationCircle, HiPlus, HiFilter, HiHome, HiOutlineCash, HiOutlineShieldExclamation, HiOutlineDotsVertical, HiOutlineTrash } from "react-icons/hi";
 import Dashboard from "../../../layout/Dashboard";
-import dataService from '../../../services/dataService.js';
+import modelsService from "../services/modelsService";
 
 const formatDateTime = (dateString) => {
    const date = new Date(dateString);
    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
    const day = String(date.getDate()).padStart(2, "0");
    const year = date.getFullYear();
-   const hours = String(date.getHours()).padStart(2, "0");
-   const minutes = String(date.getMinutes()).padStart(2, "0");
-   const seconds = String(date.getSeconds()).padStart(2, "0");
-
    return `${month}-${day}-${year}`;
 };
 
@@ -36,7 +32,7 @@ export default function Models() {
    const fetchCreditScore = async () => {
       try {
          setLoadingScreen(true);
-         const response = await dataService.getCreditScore();
+         const response = await modelsService.listCreditScores();
          if (response.success) {
             const filteredData = response.data.filter(item => item.is_deleted != true);
             setCreditScoreData(filteredData);
@@ -51,7 +47,7 @@ export default function Models() {
    const fetchRiskScore = async () => {
       try {
          setLoadingScreen(true);
-         const response = await dataService.getRiskScore();
+         const response = await modelsService.listRiskScores();
          
          if(response.success) {
             const filteredData = response.data.filter(item => item.is_deleted != true);
@@ -81,7 +77,7 @@ export default function Models() {
       );
    }
 
-   const handleView = (data, type) => {
+   const handleView = (data) => {
   
       // Store data in localStorage
       localStorage.setItem('model_detail', JSON.stringify(data));
@@ -99,8 +95,8 @@ export default function Models() {
    const handleDeleteRow = async () => {
       try {
          var response;
-         if(modelType == "credit") response = await dataService.deleteCreditScore(selectedRow);
-         else response = await dataService.deleteRiskScore(selectedRow);
+         if(modelType == "credit") response = await modelsService.removeCreditScore(selectedRow);
+         else response = await modelsService.removeRiskScore(selectedRow);
 
          if (response.success) {
             setToastMessage({ type: "success", message: "Deleted successfully!" });

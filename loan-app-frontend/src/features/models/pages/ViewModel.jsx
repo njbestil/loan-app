@@ -1,6 +1,6 @@
 import { Spinner, Accordion, Breadcrumb, Card, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiOutlineEye, HiExclamation, HiCheck, HiOutlineExclamationCircle, HiPlus, HiFilter, HiHome, HiOutlineCash, HiOutlineShieldExclamation, HiOutlineDotsVertical, HiOutlinePencilAlt, HiOutlineLockClosed, HiOutlineTrash } from "react-icons/hi";
+import { HiHome } from "react-icons/hi";
 import Dashboard from "../../../layout/Dashboard";
 
 const formatDateTime = (dateString) => {
@@ -8,10 +8,6 @@ const formatDateTime = (dateString) => {
   const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
   const day = String(date.getDate()).padStart(2, "0");
   const year = date.getFullYear();
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
-
   return `${month}-${day}-${year}`;
 };
 
@@ -127,4 +123,4 @@ export default function ViewModel() {
     </>
 
   );
-};
+}

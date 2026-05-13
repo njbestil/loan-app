@@ -42,6 +42,9 @@ src/
     users/
       pages/
       services/
+    models/
+      pages/
+      services/
   services/
     api.js
     dataService.js
@@ -91,10 +94,11 @@ This area manages users, user profiles, password changes, filtering, and links t
 
 Located mostly in:
 
-- `src/pages/dashboard/models/Models.jsx`
-- `src/pages/dashboard/models/ViewModel.jsx`
-- `src/pages/dashboard/models/CreateCreditModel.jsx`
-- `src/pages/dashboard/models/CreateRiskModel.jsx`
+- `src/features/models/pages/Models.jsx`
+- `src/features/models/pages/ViewModel.jsx`
+- `src/features/models/pages/CreateCreditModel.jsx`
+- `src/features/models/pages/CreateRiskModel.jsx`
+- `src/features/models/services/modelsService.js`
 - `src/services/dataService.js`
 
 Credit and risk scoring models are stored by the backend as JSON string fields such as `score_form` and `passing_score`.
@@ -347,6 +351,8 @@ Current refactor progress:
 - Auth pages use `src/features/auth/services/authService.js` as a feature-level facade over the legacy `userService`.
 - User pages have been moved into `src/features/users/pages`.
 - User pages use `src/features/users/services/usersService.js` as a feature-level facade over the legacy `userService`.
+- Model pages have been moved into `src/features/models/pages`.
+- Model pages use `src/features/models/services/modelsService.js` as a feature-level facade over the legacy `dataService`.
 - `App.jsx` no longer contains the unused Vite starter state.
 - `userService.changePassword` now reads reset query parameters through `api.getQueryParam`.
 

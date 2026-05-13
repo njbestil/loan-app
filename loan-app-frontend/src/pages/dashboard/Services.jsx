@@ -1,5 +1,3 @@
-import React from "react";
-import { List, Card } from "flowbite-react";
 import { HiOutlineCash, HiOutlineClipboardList, HiOutlineUser } from "react-icons/hi";
 import Dashboard from "../../layout/Dashboard";
 

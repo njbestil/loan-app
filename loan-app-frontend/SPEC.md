@@ -31,10 +31,10 @@ src/
     Dashboard.jsx
   pages/
     dashboard/
-      creditdata/
-      creditscore/
-      models/
-      users/
+      About.jsx
+      Contact.jsx
+      Home.jsx
+      Services.jsx
   features/
     auth/
       pages/
@@ -48,6 +48,8 @@ src/
     applications/
       pages/
       services/
+    scoring/
+      pages/
   services/
     api.js
     dataService.js
@@ -110,8 +112,8 @@ Credit and risk scoring models are stored by the backend as JSON string fields s
 
 Located mostly in:
 
-- `src/pages/dashboard/creditscore/PreEvaluation.jsx`
-- `src/pages/dashboard/creditscore/Evaluation.jsx`
+- `src/features/scoring/pages/PreEvaluation.jsx`
+- `src/features/scoring/pages/Evaluation.jsx`
 - `src/features/applications/pages/Application.jsx`
 - `src/features/applications/pages/UserApplication.jsx`
 - `src/features/applications/pages/ApplicantDetails.jsx`
@@ -359,8 +361,12 @@ Current refactor progress:
 - Model pages use `src/features/models/services/modelsService.js` as a feature-level facade over the legacy `dataService`.
 - Application/report pages have been moved into `src/features/applications/pages`.
 - Application/report pages use `src/features/applications/services/applicationsService.js`, plus existing feature facades for users and models where needed.
+- Scoring/evaluation pages have been moved into `src/features/scoring/pages`.
+- Empty legacy folders under `src/pages/auth` and nested dashboard feature folders have been removed.
 - `App.jsx` no longer contains the unused Vite starter state.
 - `userService.changePassword` now reads reset query parameters through `api.getQueryParam`.
+- Shared/static shell files have had unused imports removed, `Dashboard.jsx` now exports a correctly named `Dashboard` component, and Vite/Tailwind config files are aligned with the project's ESM setup.
+- Current lint baseline has no errors. Remaining lint output is limited to React hook dependency warnings in feature pages.
 
 Do not treat a failing baseline as permission to add more warnings. New or touched files should be kept clean.
 

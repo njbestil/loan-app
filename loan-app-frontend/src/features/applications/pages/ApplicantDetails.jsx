@@ -222,7 +222,7 @@ export default function ApplicantDetails() {
                      <Timeline.Content>
                         <Timeline.Time className='font-semibold text-lg text-cyan-600'>Credit Score</Timeline.Time>
                         <Timeline.Body>
-                           <p className='my-5 text-md text-gray-500'>The credit score result provides an evaluation of an applicant's financial reliability based on various criteria, including personal situation and loan history. Each category is assessed using predefined scoring rules, with higher scores indicating lower risk. The final score helps determine the applicant's creditworthiness and eligibility for financial products.</p>
+                           <p className='my-5 text-md text-gray-500'>The credit score result provides an evaluation of an applicant&apos;s financial reliability based on various criteria, including personal situation and loan history. Each category is assessed using predefined scoring rules, with higher scores indicating lower risk. The final score helps determine the applicant&apos;s creditworthiness and eligibility for financial products.</p>
 
                            <div className="flex items-center justify-between gap-4 mb-5">
                               <div className="flex items-center gap-2">
@@ -268,7 +268,7 @@ export default function ApplicantDetails() {
                      <Timeline.Content>
                         <Timeline.Time className='font-semibold text-lg text-cyan-600'>Credit Risk Rating Score</Timeline.Time>
                         <Timeline.Body>
-                           <p className='my-5 text-md text-gray-500'>Credit Risk Rating Score evaluates an individual's financial reliability based on various factors such as age, income source, loan status, and collateral. A higher score indicates lower credit risk and a greater likelihood of loan approval, while a lower score suggests higher risk and potential financial instability.</p>
+                           <p className='my-5 text-md text-gray-500'>Credit Risk Rating Score evaluates an individual&apos;s financial reliability based on various factors such as age, income source, loan status, and collateral. A higher score indicates lower credit risk and a greater likelihood of loan approval, while a lower score suggests higher risk and potential financial instability.</p>
 
                            <div className="flex items-center justify-between gap-4 mb-5">
                               <div className="flex items-center gap-2">

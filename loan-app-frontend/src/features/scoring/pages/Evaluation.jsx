@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Toast, Button, Checkbox, Label, TextInput, Select, Breadcrumb, Spinner, Modal, Textarea, Radio, Progress, Timeline, Flowbite, Table, Card } from "flowbite-react";
+import { useState, useEffect } from 'react';
+import { Toast, Button, Label, TextInput, Select, Breadcrumb, Spinner, Modal, Textarea, Radio, Progress, Timeline, Flowbite, Table, Card } from "flowbite-react";
 import { HiCheck, HiExclamation, HiHome, HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineExclamationCircle,
-    HiOutlineCheckCircle, HiOutlineCash, HiOutlineShieldExclamation, HiArrowNarrowRight } from "react-icons/hi";
+    HiOutlineCheckCircle, HiOutlineCash, HiOutlineShieldExclamation } from "react-icons/hi";
 import Dashboard from "../../../layout/Dashboard";
-import userService from "../../../services/userService";
-import dataService from '../../../services/dataService.js';
+import applicationsService from "../../applications/services/applicationsService";
+import modelsService from "../../models/services/modelsService";
+import usersService from "../../users/services/usersService";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const useQueryParams = () => {
@@ -58,13 +59,10 @@ function Evaluation() {
     const [riskScoreResult, setRiskScoreResult] = useState({});
     const [riskScoreForm, setRiskScoreForm] = useState({});
 
-    // Check if all fields are filled
-    const isRiskScoreFormComplete = Object.values(riskScoreForm).every(value => value !== null && value !== "");
-
     useEffect(() => {
         const getCreditScoreData = async () => {
             try {
-                const response = await dataService.getCreditScore();
+                const response = await modelsService.listCreditScores();
 
                 // Ensure creditScore is valid
                 if (!response || !response.data) {
@@ -101,7 +99,7 @@ function Evaluation() {
 
         const getRiskScoreData = async () => {
             try {
-                const response = await dataService.getRiskScore();
+                const response = await modelsService.listRiskScores();
 
                 // Ensure creditScore is valid
                 if (!response || !response.data) {
@@ -139,7 +137,7 @@ function Evaluation() {
         const fetchUsers = async () => {
             try {
                 setLoadingScreen(true);
-                const response = await userService.getUsers();
+                const response = await usersService.list();
                 
                 // Filter users with role "user"
                 const filteredUsers = response.data.filter(user => user.id === userId)[0];
@@ -198,11 +196,11 @@ function Evaluation() {
         console.log(step)
         if (direction === "next" && step <= 3) {
             switch (step) {
-                case 1:
+                case 1: {
                     // Sum only valid credit scores, excluding "applicant" and "amount"
                     const sumCreditScores = Object.entries(creditScoreForm)
                         .filter(([key, value]) => key.startsWith("creditscore") && !isNaN(value) && value !== "")  // Filter keys that start with "creditscore"
-                        .reduce((sum, [key, value]) => sum + parseInt(value, 10), 0);  // Sum the numeric values
+                        .reduce((sum, [, value]) => sum + parseInt(value, 10), 0);  // Sum the numeric values
 
                     setCreditScore(sumCreditScores);
 
@@ -220,12 +218,13 @@ function Evaluation() {
                         return;
                     }
                     break;
+                }
 
-                case 2:
+                case 2: {
                     // Sum of risk scores
                     const sumRiskScores = Object.entries(riskScoreForm)
-                    .filter(([key, value]) => key.startsWith("riskscore") && value !== null && value !== undefined && value !== "" && !isNaN(Number(value)))  
-                    .reduce((sum, [key, value]) => sum + Number(value), 0);
+                    .filter(([key, value]) => key.startsWith("riskscore") && value !== null && value !== undefined && value !== "" && !isNaN(Number(value)))
+                    .reduce((sum, [, value]) => sum + Number(value), 0);
 
                     setRiskScore(sumRiskScores);
 
@@ -236,6 +235,7 @@ function Evaluation() {
                     setRiskScoreResult(riskScoreResult);
 
                     break;
+                }
                 case 3:
                     handleSubmit();
                     console.log("step 3")
@@ -254,7 +254,7 @@ function Evaluation() {
     function getRiskCategory(score) {
         const category = riskPassingScore.find(item => score >= item.from && score <= item.to);
         return category ? category : {};
-    };
+    }
 
     const getRiskColor = (progress) => {
         progress = Number(progress);
@@ -371,7 +371,7 @@ function Evaluation() {
                 return;
             }
 
-            var response = await dataService.createApplication(payload);
+            var response = await applicationsService.create(payload);
 
             if (response.success) {
                 navigate("/home");
@@ -648,7 +648,7 @@ function Evaluation() {
                                             <Timeline.Content>
                                                 <Timeline.Time className='font-semibold text-md text-cyan-600'>Credit Score</Timeline.Time>
                                                 <Timeline.Body>
-                                                    <p className='my-5 text-sm text-gray-500'>The credit score result provides an evaluation of an applicant's financial reliability based on various criteria, including personal situation and loan history. Each category is assessed using predefined scoring rules, with higher scores indicating lower risk. The final score helps determine the applicant's creditworthiness and eligibility for financial products.</p>
+                                                    <p className='my-5 text-sm text-gray-500'>The credit score result provides an evaluation of an applicant&apos;s financial reliability based on various criteria, including personal situation and loan history. Each category is assessed using predefined scoring rules, with higher scores indicating lower risk. The final score helps determine the applicant&apos;s creditworthiness and eligibility for financial products.</p>
 
                                                     <div className="flex items-center justify-between gap-4 mb-5">
                                                         <div className="flex items-center gap-2">
@@ -694,7 +694,7 @@ function Evaluation() {
                                             <Timeline.Content>
                                                 <Timeline.Time className='font-semibold text-md text-cyan-600'>Credit Risk Rating Score</Timeline.Time>
                                                 <Timeline.Body>
-                                                    <p className='my-5 text-sm text-gray-500'>Credit Risk Rating Score evaluates an individual's financial reliability based on various factors such as age, income source, loan status, and collateral. A higher score indicates lower credit risk and a greater likelihood of loan approval, while a lower score suggests higher risk and potential financial instability.</p>
+                                                    <p className='my-5 text-sm text-gray-500'>Credit Risk Rating Score evaluates an individual&apos;s financial reliability based on various factors such as age, income source, loan status, and collateral. A higher score indicates lower credit risk and a greater likelihood of loan approval, while a lower score suggests higher risk and potential financial instability.</p>
 
                                                     <div className="flex items-center justify-between gap-4 mb-5">
                                                         <div className="flex items-center gap-2">
@@ -815,7 +815,7 @@ function Evaluation() {
                         <div className="text-center">
                             <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-red-400 dark:text-red-200" />
                             <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-500">
-                                Unfortunately, the applicant's points did not reach the passing score.
+                                Unfortunately, the applicant&apos;s points did not reach the passing score.
                                 <p className="mt-5 text-gray-900 font-bold">Score: {creditScore}</p>
                                 <p className="mb-5 text-gray-900 font-bold">Required Score: {creditPassingScore.from}</p>
                             </h3>

@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Carousel, Label, TextInput, Select, Breadcrumb, Spinner, Modal, Toast } from "flowbite-react";
-import { Link } from 'react-router-dom';
 import { HiCheck, HiExclamation, HiArrowRight, HiOutlineShieldExclamation, HiHome, HiOutlineExclamationCircle, HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineCash  } from "react-icons/hi";
 import Dashboard from "../../../layout/Dashboard";
-import userService from "../../../services/userService";
-import dataService from '../../../services/dataService.js';
+import modelsService from "../../models/services/modelsService";
+import usersService from "../../users/services/usersService";
 import { useNavigate } from "react-router-dom";
 
 const chunkArray = (array, size) => {
@@ -58,7 +57,7 @@ function PreEvaluation() {
    const fetchUsers = async () => {
       try {
          setLoadingScreen(true);
-         const response = await userService.getUsers();
+         const response = await usersService.list();
          
          // Get logged-in user from localStorage
          const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -80,7 +79,7 @@ function PreEvaluation() {
    const fetchCreditScore = async () => {
       try {
          setLoadingScreen(true);
-         const response = await dataService.getCreditScore();
+         const response = await modelsService.listCreditScores();
          
          if (response.success) {
             const filteredData = response.data.filter(item => item.is_deleted != true);
@@ -96,7 +95,7 @@ function PreEvaluation() {
    const fetchRiskScore = async () => {
       try {
          setLoadingScreen(true);
-         const response = await dataService.getRiskScore();
+         const response = await modelsService.listRiskScores();
          
          if(response.success) {
             const filteredData = response.data.filter(item => item.is_deleted != true);

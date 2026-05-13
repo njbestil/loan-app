@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Card, Tooltip } from "flowbite-react";
-import { HiUserAdd, HiOutlineUser, HiOutlineCash, HiOutlineTable, HiOutlineClipboardList, HiOutlinePencilAlt, HiOutlineDocumentAdd, HiOutlineDocumentSearch } from "react-icons/hi";
+import { Card } from "flowbite-react";
+import { HiUserAdd, HiOutlineUser, HiOutlineCash, HiOutlineTable, HiOutlineClipboardList } from "react-icons/hi";
 import Dashboard from "../../layout/Dashboard";
 
 function Home() {

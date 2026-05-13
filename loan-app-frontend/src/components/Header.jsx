@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button, Navbar } from "flowbite-react";
 import { HiOutlineLogout } from "react-icons/hi";

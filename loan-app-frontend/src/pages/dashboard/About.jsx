@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, Timeline } from "flowbite-react";
 import Dashboard from "../../layout/Dashboard";
 

@@ -30,12 +30,18 @@ src/
   layout/
     Dashboard.jsx
   pages/
-    auth/
     dashboard/
       creditdata/
       creditscore/
       models/
       users/
+  features/
+    auth/
+      pages/
+      services/
+    users/
+      pages/
+      services/
   services/
     api.js
     dataService.js
@@ -51,11 +57,12 @@ src/
 
 Located mostly in:
 
-- `src/pages/auth/Login.jsx`
-- `src/pages/auth/ForgotPassword.jsx`
-- `src/pages/auth/ResetPassword.jsx`
-- `src/pages/auth/Register.jsx`
-- `src/pages/auth/EmailVerified.jsx`
+- `src/features/auth/pages/Login.jsx`
+- `src/features/auth/pages/ForgotPassword.jsx`
+- `src/features/auth/pages/ResetPassword.jsx`
+- `src/features/auth/pages/Register.jsx`
+- `src/features/auth/pages/EmailVerified.jsx`
+- `src/features/auth/services/authService.js`
 - `src/services/userService.js`
 
 Authentication data is currently stored in `localStorage` under the `user` key. API requests use a bearer token from that stored user object.
@@ -73,8 +80,9 @@ Dashboard pages currently wrap their content manually with the `Dashboard` compo
 
 Located mostly in:
 
-- `src/pages/dashboard/users/Users.jsx`
-- `src/pages/dashboard/users/UserProfile.jsx`
+- `src/features/users/pages/Users.jsx`
+- `src/features/users/pages/UserProfile.jsx`
+- `src/features/users/services/usersService.js`
 - `src/services/userService.js`
 
 This area manages users, user profiles, password changes, filtering, and links to user loan applications.
@@ -333,6 +341,15 @@ npm run build
 
 Current lint status at the time this spec was created: failing with many unused imports, undefined variables, hook dependency warnings, and stale Vite starter code.
 
+Current refactor progress:
+
+- Auth pages have been moved into `src/features/auth/pages`.
+- Auth pages use `src/features/auth/services/authService.js` as a feature-level facade over the legacy `userService`.
+- User pages have been moved into `src/features/users/pages`.
+- User pages use `src/features/users/services/usersService.js` as a feature-level facade over the legacy `userService`.
+- `App.jsx` no longer contains the unused Vite starter state.
+- `userService.changePassword` now reads reset query parameters through `api.getQueryParam`.
+
 Do not treat a failing baseline as permission to add more warnings. New or touched files should be kept clean.
 
 ## Agent Instructions
@@ -361,4 +378,3 @@ The safest first implementation pass is:
 6. Extract shared `LoadingScreen` and error normalization helpers.
 7. Start splitting `Users.jsx` into table, modal, validation, and hook files.
 8. Start splitting `Evaluation.jsx` into scoring utilities and step components.
-

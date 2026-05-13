@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, TextInput } from "flowbite-react";
 import { HiOutlineArrowRight, HiLockClosed, HiMail } from "react-icons/hi";
-import userService from "../../services/userService"; // Import your userService
+import authService from "../services/authService";
 
 function Login() {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ function Login() {
     setError(null);
 
     try {
-      const response = await userService.loginUser(formData); 
+      const response = await authService.login(formData); 
 
       if(response.data.rol != "users") {
         localStorage.setItem("user", JSON.stringify(response.data));

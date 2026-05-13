@@ -1,11 +1,10 @@
-import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 
-import Login from './pages/auth/Login';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import ResetPassword from './pages/auth/ResetPassword';
-import Register from './pages/auth/Register';
-import EmailVerified from './pages/auth/EmailVerified';
+import Login from './features/auth/pages/Login';
+import ForgotPassword from './features/auth/pages/ForgotPassword';
+import ResetPassword from './features/auth/pages/ResetPassword';
+import Register from './features/auth/pages/Register';
+import EmailVerified from './features/auth/pages/EmailVerified';
 import NotFound from './pages/NotFound';
 
 // Dashboard
@@ -13,8 +12,8 @@ import Home from './pages/dashboard/Home';
 import About from './pages/dashboard/About';
 import Services from './pages/dashboard/Services';
 import Contact from './pages/dashboard/Contact';
-import Users from './pages/dashboard/users/Users';
-import UserProfile from './pages/dashboard/users/UserProfile';
+import Users from './features/users/pages/Users';
+import UserProfile from './features/users/pages/UserProfile';
 import Models from './pages/dashboard/models/Models';
 import ViewModel from './pages/dashboard/models/ViewModel';
 import CreateCreditModel from './pages/dashboard/models/CreateCreditModel';

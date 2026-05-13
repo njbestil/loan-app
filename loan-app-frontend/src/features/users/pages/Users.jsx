@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Checkbox, Button, Breadcrumb, Dropdown, Table, Modal, Label, TextInput, Select, Toast, Spinner, Badge } from "flowbite-react";
 import { HiFilter, HiHome, HiOutlineDotsVertical, HiPlus, HiCheck, HiExclamation, HiOutlineTrash, HiOutlinePencilAlt, HiOutlineFolder, HiOutlineCheckCircle, HiOutlineXCircle, HiOutlineLockClosed, HiOutlineExclamationCircle } from "react-icons/hi";
 import Dashboard from "../../../layout/Dashboard";
-import userService from "../../../services/userService";
+import usersService from "../services/usersService";
 import dataService from "../../../services/dataService";
 import { useNavigate } from "react-router-dom";
 
@@ -40,7 +40,7 @@ export default function Users() {
    const fetchUsers = async () => {
       try {
          setLoadingScreen(true);
-         const response = await userService.getUsers();
+         const response = await usersService.list();
 
          // Filter users with is_active = true
          let activeUsers = response.data.filter(
@@ -77,10 +77,6 @@ export default function Users() {
       fetchUsers();
       fetchApplications();
    }, []);
-
-   const handleSearchChange = (event) => {
-      setSearchTerm(event.target.value);
-   };
 
    const filteredUsers = users.filter(user => {
       const address = (user.address) ? user.address : "";
@@ -227,7 +223,7 @@ export default function Users() {
       setLoading(true); // Show loading
 
       try {
-         const response = await userService.deleteUser(selectedUser);
+         const response = await usersService.remove(selectedUser);
 
          setLoading(false); // Hide loading
 
@@ -269,10 +265,10 @@ export default function Users() {
 
          if (mode == "add") { 
             formData.admin_id = (formData.role == "user") ? loggedInUserId : 0;
-            response = await userService.registerUser(formData);
+            response = await usersService.register(formData);
           }
-         else if (mode == "edit") { response = await userService.updateUser(selectedUser, formData); }
-         else if (mode == "password") { response = await userService.changeUserPassword(selectedUser, formData); }
+         else if (mode == "edit") { response = await usersService.update(selectedUser, formData); }
+         else if (mode == "password") { response = await usersService.changePassword(selectedUser, formData); }
 
          setLoading(false); // Hide loading
 
@@ -372,10 +368,6 @@ export default function Users() {
 
       // Prevent input from exceeding the intended format length (max: 12 chars)
       return formatted.length > 12 ? formData.contact_number : formatted;
-   };
-
-   const hasLoanApplication = (id) => {
-      return applications.some(app => app.user_id === id);
    };
 
    const getUserLoanApplicationCount = (id) => {

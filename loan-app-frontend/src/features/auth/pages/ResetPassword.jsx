@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Checkbox, Label, TextInput, Select, Toast, Modal } from "flowbite-react";
+import { useState } from 'react';
+import { Button, Label, TextInput, Toast } from "flowbite-react";
 import { HiOutlineChevronLeft, HiExclamation, HiCheck } from "react-icons/hi";
 import { Link } from 'react-router-dom';
-import userService from "../../services/userService";
+import authService from "../services/authService";
 
 function ResetPassword() {
   const [formData, setFormData] = useState({
@@ -34,7 +34,7 @@ function ResetPassword() {
     setLoading(true); // Show loading
 
     try {
-      const response = await userService.changePassword(formData);
+      const response = await authService.changePassword(formData);
 
       
 

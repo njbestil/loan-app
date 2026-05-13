@@ -1,16 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Checkbox, Button, Breadcrumb, Dropdown, Table, Modal, Label, TextInput, Select, Toast, Spinner, Badge } from "flowbite-react";
-import { HiFilter, HiHome, HiOutlineDotsVertical, HiPlus, HiCheck, HiExclamation, HiOutlineTrash, HiOutlinePencilAlt, HiOutlineLockClosed, HiOutlineExclamationCircle } from "react-icons/hi";
+import { useState, useEffect, useRef } from 'react';
+import { Button, Breadcrumb, Modal, Label, TextInput, Toast, Spinner } from "flowbite-react";
+import { HiHome, HiCheck, HiExclamation } from "react-icons/hi";
 import Dashboard from "../../../layout/Dashboard";
-import userService from "../../../services/userService";
+import usersService from "../services/usersService";
 
-export default function Users() {
+export default function UserProfile() {
   const formRef = useRef(null);
   const [toastMessage, setToastMessage] = useState(null);
   const [loading, setLoading] = useState(false); // State for loading
   const [loadingScreen, setLoadingScreen] = useState(false); // State for loading
   const [errors, setErrors] = useState({});
-  const [userDetail, setUserDetail] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [formData, setFormData] = useState({
     fname: null,
@@ -38,9 +37,8 @@ export default function Users() {
   const fetchUsers = async () => {
     try {
       setLoadingScreen(true);
-      const response = await userService.getUsers();
+      const response = await usersService.list();
       const userDetail = response.data.find(row => row.id === user.id);
-      setUserDetail(userDetail); // Update the user list
       setFormData({
         fname: userDetail.fname,
         lname: userDetail.lname,
@@ -61,10 +59,6 @@ export default function Users() {
   useEffect(() => {
     fetchUsers();
   }, []);
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,7 +110,7 @@ export default function Users() {
     setLoading(true); // Show loading
 
     try {
-      const response = await userService.updateUser(user.id, formData);
+      const response = await usersService.update(user.id, formData);
 
       setLoading(false); // Hide loading
 
@@ -155,7 +149,7 @@ export default function Users() {
     setLoading(true); // Show loading
 
     try {
-      var response = await userService.changeUserPassword(user.id, passwordFormData);
+      var response = await usersService.changePassword(user.id, passwordFormData);
 
       setLoading(false); // Hide loading
 
@@ -412,7 +406,7 @@ export default function Users() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                       </svg>
-                      "Updating password...
+                      Updating password...
                     </>
                   ) : (
                     "Submit"

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Button, Checkbox, Label, TextInput, Select, Toast, Modal } from "flowbite-react";
+import { useState } from 'react';
+import { Button, Checkbox, Label, TextInput, Toast, Modal } from "flowbite-react";
 import { HiOutlineChevronLeft, HiExclamation, HiCheck } from "react-icons/hi";
 import { Link } from 'react-router-dom';
-import userService from "../../services/userService";
+import authService from "../services/authService";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -44,7 +44,7 @@ function Register() {
     setLoading(true); // Show loading
 
     try {
-      const response = await userService.registerUser(formData);
+      const response = await authService.register(formData);
 
       setLoading(false); // Hide loading
 

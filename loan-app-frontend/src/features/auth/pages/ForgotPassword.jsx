@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Label, TextInput, Alert, Toast } from "flowbite-react";
+import { Button, Label, TextInput, Toast } from "flowbite-react";
 import { HiOutlineArrowRight, HiMail, HiOutlineChevronLeft, HiExclamation, HiCheck } from "react-icons/hi";
-import userService from "../../services/userService"; // Import your userService
+import authService from "../services/authService";
 
 function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -21,7 +21,7 @@ function ForgotPassword() {
       var payload = {
         "email" : email
       }
-      const response = await userService.forgotPassword(payload);
+      const response = await authService.forgotPassword(payload);
 
       if (response.success) {
         setToastMessage({ type: "success", message: "Reset link sent successfully!" });
@@ -85,7 +85,7 @@ function ForgotPassword() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                     </svg>
-                    "Sending..."
+                    Sending...
                   </>
                 ) : (
                   "Send reset link"

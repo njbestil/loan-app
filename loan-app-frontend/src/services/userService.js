@@ -35,8 +35,8 @@ const forgotPassword = async (payload) => {
 
 const changePassword = async (payload) => {
     try {
-        var token = getQueryParam("tkn");
-        var userId = getQueryParam("id");
+        var token = api.getQueryParam("tkn");
+        var userId = api.getQueryParam("id");
 
         if (!token) {
             throw new Error("Unauthorized: No token found");

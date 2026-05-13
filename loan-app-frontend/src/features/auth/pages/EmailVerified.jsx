@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "flowbite-react";
 import { HiCheckCircle } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
